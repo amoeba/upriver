@@ -1,0 +1,12 @@
+Package: upriver
+Type: Package
+Title: Upriver forecast model for my thesis
+Version: 0.1
+Date: 2015-02-26
+Author: person("Bryce", "Mecum", "bdmecum@alaska.edu", c("aur", "cre"))
+Maintainer: Bryce Mecum <bdmecum@alaska.edu>
+Description: Upriver forecast model for my thesis
+License: BSD
+LazyData: TRUE
+Imports:
+  dplyr
