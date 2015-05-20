@@ -72,8 +72,9 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
 
 # Debug
 #   location <- 250
-#   arrival <- data.frame(day = 1:10, proportions = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
+#   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
 #   parameters <- params_simple
+#   start_position <- 0
 
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
