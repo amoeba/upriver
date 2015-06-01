@@ -106,7 +106,8 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
   d
 }
 
-
+#' @export
+#' @rdname median_timing
 percentile_timing <- function(percentile, location, arrival, parameters, start_position = 0) {
 
   # Debug
