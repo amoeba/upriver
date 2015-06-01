@@ -70,11 +70,11 @@ timings <- function(location, arrival, parameters, start_position = 0) {
 
 median_timing <- function(location, arrival, parameters, start_position = 0) {
 
-# Debug
-#   location <- 250
-#   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
-#   parameters <- params_simple
-#   start_position <- 0
+  # Debug
+  #   location <- 250
+  #   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
+  #   parameters <- params_simple
+  #   start_position <- 0
 
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -97,6 +97,46 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
       summarise(sum(proportion))
 
     if(p >= 0.5) {
+      break
+    }
+  }
+
+  # Calculate the first date where the proportion at or above location is
+  # greater than or equal to 0.5 (median timing)
+  d
+}
+
+
+percentile_timing <- function(percentile, location, arrival, parameters, start_position = 0) {
+
+  # Debug
+  #   location <- 250
+  #   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
+  #   parameters <- params_simple
+  #   start_position <- 0
+
+  stopifnot(percentile < 1 && percentile > 0)
+  stopifnot(location >= 0)
+  stopifnot(length(arrival) > 0)
+  stopifnot(c("day", "proportion") %in% names(arrival))
+  stopifnot(sum(arrival$proportion) == 1)
+
+  # Calculate an upper-bound on the time this could take
+  max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
+
+  d <- NA
+  p <- NA
+
+  for(d in 1:max_time) {
+    # Calculate positions
+    pos <- start_position + positions(d - arrival$day, parameters)
+
+    # Calculate the proportion of the run beyond or at location
+    p <- arrival[which(pos >= location),] %>%
+      select(proportion) %>%
+      summarise(sum(proportion))
+
+    if(p >= percentile) {
       break
     }
   }
