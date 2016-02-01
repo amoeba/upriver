@@ -1,7 +1,2 @@
-r_github_packages:
-  - jimhester/covr
-before_install:
-  - sudo pip install codecov
-after_success:
-  - codecov
-  - Rscript -e 'library(covr);codecov()'
+language: r
+sudo: required
