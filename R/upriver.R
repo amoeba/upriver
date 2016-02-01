@@ -79,7 +79,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
   stopifnot(c("day", "proportion") %in% names(arrival))
-  stopifnot(sum(arrival$proportion) == 1)
+  stopifnot(abs(1 - sum(arrival$proportion)) < 0.01) # Allow for a fudge factor
 
   # Calculate an upper-bound on the time this could take
   max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
