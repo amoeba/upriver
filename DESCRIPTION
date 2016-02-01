@@ -10,3 +10,5 @@ License: BSD
 LazyData: TRUE
 Imports:
   dplyr
+Suggests:
+  testthat
