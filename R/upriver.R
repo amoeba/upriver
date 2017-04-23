@@ -6,13 +6,14 @@ positions <- function(days, parameters) {
   stopifnot("rates" %in% names(parameters))
   stopifnot("distances" %in% names(parameters))
 
-  reaches <- parameters$reaches
   rates <- parameters$rates
   distances <- parameters$distances
 
-  stopifnot(length(reaches) == length(rates))
-  stopifnot(length(reaches) == length(distances))
-  stopifnot(as.numeric(days) == days)
+  # Add a 0'th and N+1'th reach
+  rates <- c(1, rates, rates[length(rates)])
+  distances <- c(0, distances, 1e6)
+
+  stopifnot(length(rates) == length(distances))
 
   # Store distances
   result <- rep(NA, length(days))
@@ -26,7 +27,7 @@ positions <- function(days, parameters) {
     t <- distances / rates
     tc <- cumsum(t)
 
-    spent <- rep(0, length(reaches))
+    spent <- rep(0, length(rates))
     spent[c(which(as.numeric(day >= tc) == 1))] <- 1
     which_reach <- length(which(spent == 1)) + 1
     spent[which_reach] <- (day - tc[which_reach - 1]) / t[which_reach]
