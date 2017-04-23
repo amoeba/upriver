@@ -1,8 +1,21 @@
+#' Calculate positions after some time.
+#'
+#' Calculate positions after \code{ndays} has elapsed, given the movement parameters provided in \code{parameters}.
+#'
+#' \code{parameters} should be a list with three elements, \code{rates}, and \code{distances}, each of equal size.
+#' \code{rates} should be a numeric vector of reach-specific daily movement rates, in whatever unit your analysis needs.
+#' \code{distances} should be a numeric vector of reach-specific reach lengths (end-to-end), in the (ideally) the same or compatible units to the units used in \code{rates}
+#'
+#' @param ndays (numeric) The number of days to calculate positions for.
+#' @param parameters (list) List with names reaches, rates, distances. See details.
+#'
 #' @export
 #' @rdname positions
-
-positions <- function(days, parameters) {
-  stopifnot("reaches" %in% names(parameters))
+#'
+#' @examples
+#' # Simple upriver movement
+#' positions(10, list(rates = 50, distances = 1000))
+#' # Movement with reach-to-reach variation
 #' positions(10, list(rates = c(1, 2, 3, 4, 5), distances = c(20, 20, 20, 20, 20)))
 positions <- function(ndays, parameters) {
   ndays <- as.numeric(ndays)
@@ -42,12 +55,20 @@ positions <- function(ndays, parameters) {
   result
 }
 
-
+#' Calculate run timings
+#'
+#' @param location (numeric) The location at which to calculate to run timing.
+#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' @param parameters (list) See \code{\link{positions}} for details.
+#' @param arrival_position (numeric) Defaults 0. Where to start movement.
+#'
 #' @export
 #' @rdname timings
-
+#'
+#' @examples
 #' timings(1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
 timings <- function(location, arrival, parameters, arrival_position = 0) {
+  stopifnot(is.numeric(arrival_position))
 
   result <- rep(NA, nrow(arrival))
 
@@ -66,10 +87,17 @@ timings <- function(location, arrival, parameters, arrival_position = 0) {
   result
 }
 
-
+#' Calculate median timing
+#'
+#' @param location (numeric) The location at which you want to calculate median timing.
+#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' @param parameters (list) See \code{\link{positions}} for details.
+#' @param arrival_position (numeric) Defaults 0. Where to start movement.
+#'
 #' @export
 #' @rdname median_timing
-
+#' @examples
+#' median_timing(1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
 median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -99,8 +127,18 @@ median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   d
 }
 
+#' Calculate an arbitrary timing percentile
+#'
+#' @param percentile (numeric) An arbitrary timing percentile (between 0 and 1)
+#' @param location (numeric) The location at which you want to calculate median timing.
+#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' @param parameters (list) See \code{\link{positions}} for details.
+#' @param arrival_position (numeric) Defaults 0. Where to start movement.
+#'
 #' @export
 #' @rdname percentile_timing
+#' @examples
+#' percentile_timing(0.75, 1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
 percentile_timing <- function(percentile, location, arrival, parameters, arrival_position = 0) {
   stopifnot(percentile < 1 && percentile > 0)
   stopifnot(location >= 0)

@@ -7,5 +7,5 @@ test_that("correct timings are calculated", {
 })
 
 test_that("adding an offset results in the correct timing calculation", {
-  expect_equal(timings(200, arrival_single, params_simple, start_position = 100), 7)
+  expect_equal(timings(200, arrival_single, params_simple, arrival_position = 100), 7)
 })
