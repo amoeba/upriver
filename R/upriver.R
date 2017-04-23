@@ -46,8 +46,8 @@ positions <- function(ndays, parameters) {
 #' @export
 #' @rdname timings
 
-timings <- function(location, arrival, parameters, start_position = 0) {
-  stopifnot(is.numeric(start_position))
+#' timings(1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
+timings <- function(location, arrival, parameters, arrival_position = 0) {
 
   result <- rep(NA, nrow(arrival))
 
@@ -57,7 +57,7 @@ timings <- function(location, arrival, parameters, start_position = 0) {
     pos <- rep(NA, max_day)
 
     for (j in seq_len(max_day)) {
-      pos[j] <- start_position + positions(j - d, parameters)
+      pos[j] <- arrival_position + positions(j - d, parameters)
     }
 
     result[i] <- which(pos >= location)[1]
@@ -70,7 +70,7 @@ timings <- function(location, arrival, parameters, start_position = 0) {
 #' @export
 #' @rdname median_timing
 
-median_timing <- function(location, arrival, parameters, start_position = 0) {
+median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
   stopifnot(c("day", "proportion") %in% names(arrival))
@@ -84,7 +84,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
 
   for (d in seq_len(max_time)) {
     # Calculate positions
-    pos <- start_position + positions(d - arrival$day, parameters)
+    pos <- arrival_position + positions(d - arrival$day, parameters)
 
     # Calculate the proportion of the run beyond or at location
     p <- sum(arrival[which(pos >= location),"proportion"])
@@ -101,7 +101,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
 
 #' @export
 #' @rdname percentile_timing
-percentile_timing <- function(percentile, location, arrival, parameters, start_position = 0) {
+percentile_timing <- function(percentile, location, arrival, parameters, arrival_position = 0) {
   stopifnot(percentile < 1 && percentile > 0)
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -116,7 +116,7 @@ percentile_timing <- function(percentile, location, arrival, parameters, start_p
 
   for (d in seq_len(max_time)) {
     # Calculate positions
-    pos <- start_position + positions(d - arrival$day, parameters)
+    pos <- arrival_position + positions(d - arrival$day, parameters)
 
     # Calculate the proportion of the run beyond or at location
     p <- sum(arrival[which(pos >= location),"proportion"])
