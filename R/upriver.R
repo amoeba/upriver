@@ -3,6 +3,9 @@
 
 positions <- function(days, parameters) {
   stopifnot("reaches" %in% names(parameters))
+#' positions(10, list(rates = c(1, 2, 3, 4, 5), distances = c(20, 20, 20, 20, 20)))
+positions <- function(ndays, parameters) {
+  ndays <- as.numeric(ndays)
   stopifnot("rates" %in% names(parameters))
   stopifnot("distances" %in% names(parameters))
 
@@ -16,13 +19,12 @@ positions <- function(days, parameters) {
   stopifnot(length(rates) == length(distances))
 
   # Store distances
-  result <- rep(NA, length(days))
+  result <- rep(NA, length(ndays))
 
-  for (i in seq_along(days))
-  {
-    day <- days[i]
 
     if (day < 0) next()
+  for (i in seq_along(ndays)) {
+    day <- ndays[i]
 
     t <- distances / rates
     tc <- cumsum(t)
