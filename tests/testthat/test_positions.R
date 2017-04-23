@@ -23,7 +23,7 @@ test_that("a fish travels upriver without making a mistake", {
 })
 
 test_that("a fish can travel a really far distance", {
-  expect_more_than(positions(1000, params_simple), 2000)
+  expect_gt(positions(1000, params_simple), 2000)
 })
 
 test_that("a fish can travel a fraction of a day", {
@@ -31,7 +31,7 @@ test_that("a fish can travel a fraction of a day", {
 })
 
 test_that("a fish travels even when the path is complex", {
-  expect_less_than(positions(5, params_complex) - 231.7386, 1e-04)
+  expect_lt(positions(5, params_complex) - 231.7386, 1e-04)
 })
 
 test_that("position for multiple fish can be calculated", {
