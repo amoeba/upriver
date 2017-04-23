@@ -17,13 +17,11 @@ positions <- function(days, parameters) {
   # Store distances
   result <- rep(NA, length(days))
 
-  for(i in 1:length(days))
+  for (i in seq_along(days))
   {
     day <- days[i]
 
-    if(day < 0) {
-      next()
-    }
+    if (day < 0) next()
 
     t <- distances / rates
     tc <- cumsum(t)
@@ -49,12 +47,12 @@ timings <- function(location, arrival, parameters, start_position = 0) {
 
   result <- rep(NA, nrow(arrival))
 
-  for(i in 1:length(arrival$day)) {
+  for (i in seq_along(arrival$day)) {
     d <- arrival[i,"day"][[1]]
     max_day <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + d + 20)
     pos <- rep(NA, max_day)
 
-    for(j in 1:max_day) {
+    for (j in seq_len(max_day)) {
       pos[j] <- start_position + positions(j - d, parameters)
     }
 
@@ -69,13 +67,6 @@ timings <- function(location, arrival, parameters, start_position = 0) {
 #' @rdname median_timing
 
 median_timing <- function(location, arrival, parameters, start_position = 0) {
-
-  # Debug
-  #   location <- 250
-  #   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
-  #   parameters <- params_simple
-  #   start_position <- 0
-
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
   stopifnot(c("day", "proportion") %in% names(arrival))
@@ -87,7 +78,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
   d <- NA
   p <- NA
 
-  for(d in 1:max_time) {
+  for (d in seq_len(max_time)) {
     # Calculate positions
     pos <- start_position + positions(d - arrival$day, parameters)
 
@@ -96,7 +87,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
       select(proportion) %>%
       summarise(sum(proportion))
 
-    if(p >= 0.5) {
+    if (p >= 0.5) {
       break
     }
   }
@@ -109,13 +100,6 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
 #' @export
 #' @rdname percentile_timing
 percentile_timing <- function(percentile, location, arrival, parameters, start_position = 0) {
-
-  # Debug
-  #   location <- 250
-  #   arrival <- data.frame(day = 1:10, proportion = c(0, 0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0, 0))
-  #   parameters <- params_simple
-  #   start_position <- 0
-
   stopifnot(percentile < 1 && percentile > 0)
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -128,7 +112,7 @@ percentile_timing <- function(percentile, location, arrival, parameters, start_p
   d <- NA
   p <- NA
 
-  for(d in 1:max_time) {
+  for (d in seq_len(max_time)) {
     # Calculate positions
     pos <- start_position + positions(d - arrival$day, parameters)
 
@@ -137,7 +121,7 @@ percentile_timing <- function(percentile, location, arrival, parameters, start_p
       select(proportion) %>%
       summarise(sum(proportion))
 
-    if(p >= percentile) {
+    if (p >= percentile) {
       break
     }
   }
