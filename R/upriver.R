@@ -87,9 +87,7 @@ median_timing <- function(location, arrival, parameters, start_position = 0) {
     pos <- start_position + positions(d - arrival$day, parameters)
 
     # Calculate the proportion of the run beyond or at location
-    p <- arrival[which(pos >= location),] %>%
-      select(proportion) %>%
-      summarise(sum(proportion))
+    p <- sum(arrival[which(pos >= location),"proportion"])
 
     if (p >= 0.5) {
       break
@@ -121,9 +119,7 @@ percentile_timing <- function(percentile, location, arrival, parameters, start_p
     pos <- start_position + positions(d - arrival$day, parameters)
 
     # Calculate the proportion of the run beyond or at location
-    p <- arrival[which(pos >= location),] %>%
-      select(proportion) %>%
-      summarise(sum(proportion))
+    p <- sum(arrival[which(pos >= location),"proportion"])
 
     if (p >= percentile) {
       break
