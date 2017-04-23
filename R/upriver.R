@@ -21,13 +21,14 @@ positions <- function(ndays, parameters) {
   # Store distances
   result <- rep(NA, length(ndays))
 
+  # Pre-calculate t and tc
+  t <- distances / rates
+  tc <- cumsum(t)
 
-    if (day < 0) next()
   for (i in seq_along(ndays)) {
     day <- ndays[i]
 
-    t <- distances / rates
-    tc <- cumsum(t)
+    if (day < 0) next()
 
     spent <- rep(0, length(rates))
     spent[c(which(as.numeric(day >= tc) == 1))] <- 1
