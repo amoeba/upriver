@@ -1,13 +1,19 @@
 #' Calculate positions after some time.
 #'
-#' Calculate positions after \code{ndays} has elapsed, given the movement parameters provided in \code{parameters}.
+#' Calculate positions after \code{ndays} has elapsed, given the movement
+#' parameters provided in \code{parameters}.
 #'
-#' \code{parameters} should be a list with three elements, \code{rates}, and \code{distances}, each of equal size.
-#' \code{rates} should be a numeric vector of reach-specific daily movement rates, in whatever unit your analysis needs.
-#' \code{distances} should be a numeric vector of reach-specific reach lengths (end-to-end), in the (ideally) the same or compatible units to the units used in \code{rates}
+#' \code{parameters} should be a list with three elements, \code{rates}, and
+#' \code{distances}, each of equal size.
+#' \code{rates} should be a numeric vector of reach-specific daily movement
+#' rates, in whatever unit your analysis needs.
+#' \code{distances} should be a numeric vector of reach-specific reach lengths
+#' (end-to-end), in the (ideally) the same or compatible units to the units used
+#'  in \code{rates}
 #'
 #' @param ndays (numeric) The number of days to calculate positions for.
-#' @param parameters (list) List with names reaches, rates, distances. See details.
+#' @param parameters (list) List with names reaches, rates, distances. See
+#' details.
 #'
 #' @export
 #' @rdname positions
@@ -16,7 +22,9 @@
 #' # Simple upriver movement
 #' positions(10, list(rates = 50, distances = 1000))
 #' # Movement with reach-to-reach variation
-#' positions(10, list(rates = c(1, 2, 3, 4, 5), distances = c(20, 20, 20, 20, 20)))
+#' positions(10,
+#'           list(rates = c(1, 2, 3, 4, 5),
+#'           distances = c(20, 20, 20, 20, 20)))
 positions <- function(ndays, parameters) {
   ndays <- as.numeric(ndays)
   stopifnot("rates" %in% names(parameters))
@@ -55,8 +63,16 @@ positions <- function(ndays, parameters) {
 
 #' Calculate run timings
 #'
+#' Calculates run timing given a set of parameters.
+#'
+#' \code{arrival} should be a \code{data.frame} describing a set of daily
+#' arrivals of fish at \code{arrival_position} as a series of daily proportions.
+#' It should have a column \code{day} and a corresponding column
+#' \code{proportion}, which should sum to one.
+#'
 #' @param location (numeric) The location at which to calculate to run timing.
-#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' @param arrival (data.frame) A data.frame of daily arrivals by proportion.
+#' See details.
 #' @param parameters (list) See \code{\link{positions}} for details.
 #' @param arrival_position (numeric) Defaults 0. Where to start movement.
 #'
@@ -64,7 +80,9 @@ positions <- function(ndays, parameters) {
 #' @rdname timings
 #'
 #' @examples
-#' timings(1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
+#' timings(1000,
+#'         data.frame(day=0:40, proportion = dnorm(-20:20, 0, 5)/sum(dnorm(-20:20, 0, 5))),
+#'         list(rates = 50, distances = 1000))
 timings <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(is.numeric(arrival_position))
 
@@ -73,7 +91,9 @@ timings <- function(location, arrival, parameters, arrival_position = 0) {
 
   for (i in seq_along(arrival$day)) {
     d <- arrival[i,"day"][[1]]
-    max_day <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + d + 20)
+    max_day <- round(
+      cumsum(parameters$distances /
+               parameters$rates)[length(parameters$rates) - 1] + d + 20)
     pos <- rep(NA, max_day)
 
     for (j in seq_len(max_day)) {
@@ -88,15 +108,26 @@ timings <- function(location, arrival, parameters, arrival_position = 0) {
 
 #' Calculate median timing
 #'
-#' @param location (numeric) The location at which you want to calculate median timing.
-#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' Calculate median timing given a set of parameters
+#'
+#' #' \code{arrival} should be a \code{data.frame} describing a set of daily
+#' arrivals of fish at \code{arrival_position} as a series of daily proportions.
+#' It should have a column \code{day} and a corresponding column
+#' \code{proportion}, which should sum to one.
+#'
+#' @param location (numeric) The location at which you want to calculate median
+#' timing.
+#' @param arrival (data.frame) A data.frame of daily arrivals by proportion.
+#' See details.
 #' @param parameters (list) See \code{\link{positions}} for details.
 #' @param arrival_position (numeric) Defaults 0. Where to start movement.
 #'
 #' @export
 #' @rdname median_timing
 #' @examples
-#' median_timing(1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
+#' median_timing(1000,
+#'               data.frame(day=0:40, proportion=dnorm(-20:20, 0, 5)/sum(dnorm(-20:20, 0, 5))),
+#'               list(rates = 50, distances = 1000))
 median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -106,7 +137,10 @@ median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   parameters <- expand_parameters(parameters)
 
   # Calculate an upper-bound on the time this could take
-  max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
+  max_time <- round(
+    cumsum(parameters$distances /
+             parameters$rates)[length(parameters$rates) - 1] +
+      arrival[nrow(arrival),"day"][[1]])
 
   d <- NA
   p <- NA
@@ -130,17 +164,33 @@ median_timing <- function(location, arrival, parameters, arrival_position = 0) {
 
 #' Calculate an arbitrary timing percentile
 #'
+#' Calculate an arbitrary timing percentile given a set of parameters
+#'
+#' #' \code{arrival} should be a \code{data.frame} describing a set of daily
+#' arrivals of fish at \code{arrival_position} as a series of daily proportions.
+#' It should have a column \code{day} and a corresponding column
+#' \code{proportion}, which should sum to one.
+#'
 #' @param percentile (numeric) An arbitrary timing percentile (between 0 and 1)
-#' @param location (numeric) The location at which you want to calculate median timing.
-#' @param arrival (numeric) A vector of daily arrival (absolute or proportion).
+#' @param location (numeric) The location at which you want to calculate median
+#' timing.
+#' @param arrival (data.frame) A data.frame of daily arrivals by proportion.
+#' See details.
 #' @param parameters (list) See \code{\link{positions}} for details.
 #' @param arrival_position (numeric) Defaults 0. Where to start movement.
 #'
 #' @export
 #' @rdname percentile_timing
 #' @examples
-#' percentile_timing(0.75, 1000, dnorm(-20:20, 0, 5), list(rates = 50, distances = 1000))
-percentile_timing <- function(percentile, location, arrival, parameters, arrival_position = 0) {
+#' percentile_timing(0.75,
+#'                   1000,
+#'                   data.frame(day=0:40, proportion=dnorm(-20:20, 0, 5)/sum(dnorm(-20:20, 0, 5))),
+#'                   list(rates = 50, distances = 1000))
+percentile_timing <- function(percentile,
+                              location,
+                              arrival,
+                              parameters,
+                              arrival_position = 0) {
   stopifnot(percentile < 1 && percentile > 0)
   stopifnot(location >= 0)
   stopifnot(length(arrival) > 0)
@@ -150,7 +200,10 @@ percentile_timing <- function(percentile, location, arrival, parameters, arrival
   parameters <- expand_parameters(parameters)
 
   # Calculate an upper-bound on the time this could take
-  max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
+  max_time <- round(
+    cumsum(parameters$distances /
+             parameters$rates)[length(parameters$rates) - 1] +
+      arrival[nrow(arrival),"day"][[1]])
 
   d <- NA
   p <- NA

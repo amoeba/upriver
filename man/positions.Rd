@@ -9,16 +9,27 @@ positions(ndays, parameters)
 \arguments{
 \item{ndays}{(numeric) The number of days to calculate positions for.}
 
-\item{parameters}{(list) List with names reaches, rates, distances. See details.}
+\item{parameters}{(list) List with names reaches, rates, distances. See
+details.}
 }
 \description{
-Calculate positions after \code{ndays} has elapsed, given the movement parameters provided in \code{parameters}.
+Calculate positions after \code{ndays} has elapsed, given the movement
+parameters provided in \code{parameters}.
 }
 \details{
-\code{parameters} should be a list with three elements, \code{rates}, and \code{distances}, each of equal size.
-\code{rates} should be a numeric vector of reach-specific daily movement rates, in whatever unit your analysis needs.
-\code{distances} should be a numeric vector of reach-specific reach lengths (end-to-end), in the (ideally) the same or compatible units to the units used in \code{rates}
+\code{parameters} should be a list with three elements, \code{rates}, and
+\code{distances}, each of equal size.
+\code{rates} should be a numeric vector of reach-specific daily movement
+rates, in whatever unit your analysis needs.
+\code{distances} should be a numeric vector of reach-specific reach lengths
+(end-to-end), in the (ideally) the same or compatible units to the units used
+ in \code{rates}
 }
 \examples{
-positions(10, list(rates = c(1, 2, 3, 4, 5), distances = c(20, 20, 20, 20, 20)))
+# Simple upriver movement
+positions(10, list(rates = 50, distances = 1000))
+# Movement with reach-to-reach variation
+positions(10,
+          list(rates = c(1, 2, 3, 4, 5),
+          distances = c(20, 20, 20, 20, 20)))
 }

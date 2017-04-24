@@ -1,15 +1,13 @@
 Package: upriver
 Type: Package
-Title: Upriver forecast model for my thesis
+Title: An R package for in-river fish migration and timing calculation
 Version: 0.1
 Date: 2015-02-26
-Author: person("Bryce", "Mecum", "bdmecum@alaska.edu", c("aur", "cre"))
-Maintainer: Bryce Mecum <bdmecum@alaska.edu>
-Description: Upriver forecast model for my thesis
-License: BSD
+Author: person("Bryce", "Mecum", "brycemecum@gmail.com", c("aur", "cre"))
+Maintainer: Bryce Mecum <brycemecum@gmail.com>
+Description: An R package for in-river fish migration and timing calculation.
+License: file LICENSE
 LazyData: TRUE
-Imports:
-  dplyr
 Suggests:
   testthat
 RoxygenNote: 6.0.1
