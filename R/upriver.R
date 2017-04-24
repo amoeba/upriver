@@ -22,12 +22,10 @@ positions <- function(ndays, parameters) {
   stopifnot("rates" %in% names(parameters))
   stopifnot("distances" %in% names(parameters))
 
+  # Expand parameters to add 0th and n+1th elements
+  parameters <- expand_parameters(parameters)
   rates <- parameters$rates
   distances <- parameters$distances
-
-  # Add a 0'th and N+1'th reach
-  rates <- c(1, rates, rates[length(rates)])
-  distances <- c(0, distances, 1e6)
 
   stopifnot(length(rates) == length(distances))
 
@@ -70,6 +68,7 @@ positions <- function(ndays, parameters) {
 timings <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(is.numeric(arrival_position))
 
+  parameters <- expand_parameters(parameters)
   result <- rep(NA, nrow(arrival))
 
   for (i in seq_along(arrival$day)) {
@@ -103,6 +102,8 @@ median_timing <- function(location, arrival, parameters, arrival_position = 0) {
   stopifnot(length(arrival) > 0)
   stopifnot(c("day", "proportion") %in% names(arrival))
   stopifnot(abs(1 - sum(arrival$proportion)) < 0.01) # Allow for a fudge factor
+
+  parameters <- expand_parameters(parameters)
 
   # Calculate an upper-bound on the time this could take
   max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
@@ -146,6 +147,8 @@ percentile_timing <- function(percentile, location, arrival, parameters, arrival
   stopifnot(c("day", "proportion") %in% names(arrival))
   stopifnot(sum(arrival$proportion) == 1)
 
+  parameters <- expand_parameters(parameters)
+
   # Calculate an upper-bound on the time this could take
   max_time <- round(cumsum(parameters$distances / parameters$rates)[length(parameters$rates) - 1] + arrival[nrow(arrival),"day"][[1]])
 
@@ -167,4 +170,31 @@ percentile_timing <- function(percentile, location, arrival, parameters, arrival
   # Calculate the first date where the proportion at or above location is
   # greater than or equal to 0.5 (median timing)
   d
+}
+
+#' Expand movement parameters
+#'
+#' Expands the movement parameters to include a 0th and n+1th reach.
+#'
+#' @param parameters (list) Movement parameters (names: \code{rates},
+#' \code{distances})
+#'
+#' @return (list) Expanded parameters
+expand_parameters <- function(parameters) {
+  if (!is.null(attr(parameters, "expanded", TRUE))) { return(parameters) }
+
+  stopifnot("rates" %in% names(parameters))
+  stopifnot("distances" %in% names(parameters))
+
+  parameters$rates <- c(1,
+                        parameters$rates,
+                        parameters$rates[length(parameters$rates)])
+  parameters$distances <- c(0,
+                            parameters$distances,
+                            1e6)
+
+  # Set a flag on the list so we don't doubly-expand
+  attr(parameters, "expanded") <- TRUE
+
+  parameters
 }
